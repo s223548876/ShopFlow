@@ -2,6 +2,10 @@ package com.shopflow.common.error;
 
 import com.shopflow.auth.EmailAlreadyExistsException;
 import com.shopflow.auth.InvalidCredentialsException;
+import com.shopflow.cart.CartItemAlreadyExistsException;
+import com.shopflow.cart.CartItemNotFoundException;
+import com.shopflow.cart.InsufficientStockException;
+import com.shopflow.cart.ProductUnavailableException;
 import com.shopflow.catalog.CategoryNotFoundException;
 import com.shopflow.catalog.InvalidPageRequestException;
 import com.shopflow.catalog.InvalidSortException;
@@ -12,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -106,6 +111,50 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(CartItemNotFoundException.class)
+    ResponseEntity<ApiErrorResponse> handleCartItemNotFound(HttpServletRequest request) {
+        return response(
+                HttpStatus.NOT_FOUND,
+                "CART_ITEM_NOT_FOUND",
+                "Cart item not found",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(CartItemAlreadyExistsException.class)
+    ResponseEntity<ApiErrorResponse> handleCartItemAlreadyExists(HttpServletRequest request) {
+        return response(
+                HttpStatus.CONFLICT,
+                "CART_ITEM_ALREADY_EXISTS",
+                "Product is already in the cart",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(ProductUnavailableException.class)
+    ResponseEntity<ApiErrorResponse> handleProductUnavailable(HttpServletRequest request) {
+        return response(
+                HttpStatus.CONFLICT,
+                "PRODUCT_UNAVAILABLE",
+                "Product is unavailable",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    ResponseEntity<ApiErrorResponse> handleInsufficientStock(HttpServletRequest request) {
+        return response(
+                HttpStatus.CONFLICT,
+                "INSUFFICIENT_STOCK",
+                "Insufficient stock",
+                request,
+                List.of()
+        );
+    }
+
     @ExceptionHandler(CategoryNotFoundException.class)
     ResponseEntity<ApiErrorResponse> handleCategoryNotFound(HttpServletRequest request) {
         return response(
@@ -156,6 +205,17 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND,
                 "RESOURCE_NOT_FOUND",
                 "Resource not found",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    ResponseEntity<ApiErrorResponse> handleMethodNotAllowed(HttpServletRequest request) {
+        return response(
+                HttpStatus.METHOD_NOT_ALLOWED,
+                "METHOD_NOT_ALLOWED",
+                "Request method is not supported",
                 request,
                 List.of()
         );
