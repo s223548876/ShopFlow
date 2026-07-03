@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/cart", "/api/cart/**").hasRole("CUSTOMER")
+                        .requestMatchers("/api/orders", "/api/orders/**").hasRole("CUSTOMER")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 .exceptionHandling(exceptions -> exceptions

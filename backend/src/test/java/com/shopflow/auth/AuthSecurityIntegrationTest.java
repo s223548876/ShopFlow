@@ -5,6 +5,7 @@ import com.shopflow.auth.dto.AuthResponse;
 import com.shopflow.auth.dto.RegisterResponse;
 import com.shopflow.catalog.CatalogService;
 import com.shopflow.cart.CartService;
+import com.shopflow.order.OrderService;
 import com.shopflow.common.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,9 @@ class AuthSecurityIntegrationTest {
 
     @MockitoBean
     private CartService cartService;
+
+    @MockitoBean
+    private OrderService orderService;
 
     @Test
     void healthRemainsPublic() throws Exception {

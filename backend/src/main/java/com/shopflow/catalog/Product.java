@@ -74,6 +74,10 @@ public class Product {
         this.stock = stock;
     }
 
+    public void decreaseStock(int quantity) {
+        stock -= quantity;
+    }
+
     public void deactivate() {
         active = false;
     }
