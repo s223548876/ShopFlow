@@ -1,7 +1,9 @@
 package com.shopflow.auth;
 
+import com.shopflow.admin.AdminProductService;
 import com.shopflow.auth.dto.AuthResponse;
 import com.shopflow.auth.dto.RegisterResponse;
+import com.shopflow.catalog.CatalogService;
 import com.shopflow.common.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,12 @@ class AuthSecurityIntegrationTest {
 
     @MockitoBean
     private UserRepository userRepository;
+
+    @MockitoBean
+    private CatalogService catalogService;
+
+    @MockitoBean
+    private AdminProductService adminProductService;
 
     @Test
     void healthRemainsPublic() throws Exception {

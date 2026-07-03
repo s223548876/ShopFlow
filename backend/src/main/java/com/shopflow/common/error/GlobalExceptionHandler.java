@@ -2,6 +2,10 @@ package com.shopflow.common.error;
 
 import com.shopflow.auth.EmailAlreadyExistsException;
 import com.shopflow.auth.InvalidCredentialsException;
+import com.shopflow.catalog.CategoryNotFoundException;
+import com.shopflow.catalog.InvalidPageRequestException;
+import com.shopflow.catalog.InvalidSortException;
+import com.shopflow.catalog.ProductNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +15,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
@@ -68,6 +73,67 @@ public class GlobalExceptionHandler {
                 HttpStatus.UNAUTHORIZED,
                 "INVALID_CREDENTIALS",
                 "Invalid email or password",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    ResponseEntity<ApiErrorResponse> handleTypeMismatch(
+            MethodArgumentTypeMismatchException exception,
+            HttpServletRequest request
+    ) {
+        if ("page".equals(exception.getName()) || "size".equals(exception.getName())) {
+            return handleInvalidPage(request);
+        }
+        return response(
+                HttpStatus.BAD_REQUEST,
+                "VALIDATION_ERROR",
+                "Request validation failed",
+                request,
+                List.of(new FieldErrorResponse(exception.getName(), "has an invalid value"))
+        );
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    ResponseEntity<ApiErrorResponse> handleProductNotFound(HttpServletRequest request) {
+        return response(
+                HttpStatus.NOT_FOUND,
+                "PRODUCT_NOT_FOUND",
+                "Product not found",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    ResponseEntity<ApiErrorResponse> handleCategoryNotFound(HttpServletRequest request) {
+        return response(
+                HttpStatus.NOT_FOUND,
+                "CATEGORY_NOT_FOUND",
+                "Category not found",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(InvalidPageRequestException.class)
+    ResponseEntity<ApiErrorResponse> handleInvalidPage(HttpServletRequest request) {
+        return response(
+                HttpStatus.BAD_REQUEST,
+                "INVALID_PAGE_REQUEST",
+                "Page must be non-negative and size must be between 1 and 100",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(InvalidSortException.class)
+    ResponseEntity<ApiErrorResponse> handleInvalidSort(HttpServletRequest request) {
+        return response(
+                HttpStatus.BAD_REQUEST,
+                "INVALID_SORT",
+                "Sort must use name, price, or createdAt with asc or desc direction",
                 request,
                 List.of()
         );
