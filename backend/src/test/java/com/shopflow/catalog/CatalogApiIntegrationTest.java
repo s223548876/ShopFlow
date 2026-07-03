@@ -9,6 +9,7 @@ import com.shopflow.catalog.dto.CategoryResponse;
 import com.shopflow.catalog.dto.ProductDetailResponse;
 import com.shopflow.catalog.dto.ProductSummaryResponse;
 import com.shopflow.common.api.PageResponse;
+import com.shopflow.cart.CartService;
 import com.shopflow.common.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,9 @@ class CatalogApiIntegrationTest {
 
     @MockitoBean
     private AdminProductService adminProductService;
+
+    @MockitoBean
+    private CartService cartService;
 
     @MockitoBean
     private UserRepository userRepository;
