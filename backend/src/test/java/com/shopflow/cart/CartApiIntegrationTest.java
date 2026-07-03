@@ -11,6 +11,7 @@ import com.shopflow.catalog.CategoryRepository;
 import com.shopflow.catalog.ProductNotFoundException;
 import com.shopflow.catalog.ProductRepository;
 import com.shopflow.common.security.JwtService;
+import com.shopflow.order.OrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -50,6 +51,9 @@ class CartApiIntegrationTest {
 
     @MockitoBean
     private CartService cartService;
+
+    @MockitoBean
+    private OrderService orderService;
 
     @MockitoBean
     private AuthService authService;

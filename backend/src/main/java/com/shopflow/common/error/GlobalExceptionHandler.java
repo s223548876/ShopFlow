@@ -10,6 +10,10 @@ import com.shopflow.catalog.CategoryNotFoundException;
 import com.shopflow.catalog.InvalidPageRequestException;
 import com.shopflow.catalog.InvalidSortException;
 import com.shopflow.catalog.ProductNotFoundException;
+import com.shopflow.order.CartEmptyException;
+import com.shopflow.order.InvalidOrderSortException;
+import com.shopflow.order.InvalidOrderTransitionException;
+import com.shopflow.order.OrderNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -150,6 +154,50 @@ public class GlobalExceptionHandler {
                 HttpStatus.CONFLICT,
                 "INSUFFICIENT_STOCK",
                 "Insufficient stock",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(CartEmptyException.class)
+    ResponseEntity<ApiErrorResponse> handleCartEmpty(HttpServletRequest request) {
+        return response(
+                HttpStatus.CONFLICT,
+                "CART_EMPTY",
+                "Cart is empty",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    ResponseEntity<ApiErrorResponse> handleOrderNotFound(HttpServletRequest request) {
+        return response(
+                HttpStatus.NOT_FOUND,
+                "ORDER_NOT_FOUND",
+                "Order not found",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(InvalidOrderTransitionException.class)
+    ResponseEntity<ApiErrorResponse> handleInvalidOrderTransition(HttpServletRequest request) {
+        return response(
+                HttpStatus.CONFLICT,
+                "INVALID_ORDER_TRANSITION",
+                "Invalid order status transition",
+                request,
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(InvalidOrderSortException.class)
+    ResponseEntity<ApiErrorResponse> handleInvalidOrderSort(HttpServletRequest request) {
+        return response(
+                HttpStatus.BAD_REQUEST,
+                "INVALID_SORT",
+                "Sort must use createdAt with asc or desc direction",
                 request,
                 List.of()
         );
