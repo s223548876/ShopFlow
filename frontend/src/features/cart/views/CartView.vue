@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { ElButton, ElEmpty, ElInputNumber, ElMessage, ElSkeleton, ElTag, ElAlert } from 'element-plus'
+import { useRouter } from 'vue-router'
 
 import { apiErrorMessage, getApiError } from '../../../api/errors'
 import { formatAmount } from '../../../lib/format'
+import { checkoutAndNavigate } from '../../orders/actions'
+import { createOrder } from '../../orders/api'
 import {
   deleteCartItem,
   getCart,
@@ -13,9 +16,11 @@ import {
 } from '../api'
 
 const cart = ref<CartResponse | null>(null)
+const router = useRouter()
 const quantities = ref<Record<number, number>>({})
 const loading = ref(false)
 const pendingItemId = ref<number | null>(null)
+const checkoutLoading = ref(false)
 const message = ref('')
 
 async function loadCart(): Promise<void> {
@@ -68,6 +73,23 @@ async function remove(itemId: number): Promise<void> {
   }
 }
 
+async function checkout(): Promise<void> {
+  if (!cart.value?.items.length || checkoutLoading.value) return
+  checkoutLoading.value = true
+  try {
+    await checkoutAndNavigate(
+      createOrder,
+      loadCart,
+      (orderId) => router.push({ name: 'order-detail', params: { id: orderId } }),
+    )
+    ElMessage.success('訂單建立成功')
+  } catch (error) {
+    ElMessage.error(apiErrorMessage(error))
+  } finally {
+    checkoutLoading.value = false
+  }
+}
+
 onMounted(loadCart)
 </script>
 
@@ -110,8 +132,14 @@ onMounted(loadCart)
       <div v-if="cart?.items.length" class="cart-total">
         <span>預估總額</span>
         <strong>{{ formatAmount(cart.estimatedTotal) }}</strong>
+        <el-button
+          type="primary"
+          :loading="checkoutLoading"
+          :disabled="pendingItemId !== null"
+          @click="checkout"
+        >建立訂單</el-button>
       </div>
     </div>
-    <p class="estimate-note">價格與總額以後端目前商品資料估算；本階段不提供結帳。</p>
+    <p class="estimate-note">購物車金額僅供估算；建立訂單時由後端重新確認價格與庫存。</p>
   </section>
 </template>

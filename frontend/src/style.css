@@ -320,6 +320,97 @@ p {
   text-align: right;
 }
 
+.order-filter {
+  grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) auto;
+}
+
+.order-list {
+  display: grid;
+  min-height: 12rem;
+  gap: 0.75rem;
+}
+
+.order-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) minmax(100px, auto) minmax(80px, auto) minmax(100px, auto);
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.order-card:hover {
+  border-color: #93c5fd;
+}
+
+.order-card p {
+  margin: 0.35rem 0 0;
+  color: #64748b;
+}
+
+.order-detail {
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 1rem 3rem rgb(15 23 42 / 6%);
+}
+
+.order-detail-heading,
+.order-total,
+.order-actions {
+  display: flex;
+  padding: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.order-detail-heading p {
+  margin: 0.35rem 0;
+  color: #64748b;
+}
+
+.order-detail-heading h1 {
+  margin: 0.25rem 0 1rem;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.order-table th,
+.order-table td {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.order-table th {
+  background: #f8fafc;
+  color: #475569;
+}
+
+.order-total {
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+  font-size: 1.25rem;
+}
+
+.order-actions {
+  justify-content: flex-end;
+  border-top: 1px solid #e5e7eb;
+}
+
 @media (max-width: 760px) {
   .nav-shell {
     padding: 0.75rem 0;
@@ -335,8 +426,16 @@ p {
   .filter-bar,
   .product-grid,
   .detail-card,
-  .cart-row {
+  .cart-row,
+  .order-card {
     grid-template-columns: 1fr;
+  }
+
+  .order-detail-heading,
+  .order-total,
+  .order-actions {
+    align-items: flex-start;
+    flex-wrap: wrap;
   }
 
   .product-card {

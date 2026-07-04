@@ -34,8 +34,14 @@ describe('API error mapping', () => {
   })
 
   it('maps known business errors and falls back for network failures', () => {
+    expect(apiErrorMessage(axiosError({ ...validationError, code: 'CART_EMPTY' })))
+      .toBe('購物車目前是空的')
+    expect(apiErrorMessage(axiosError({ ...validationError, code: 'PRODUCT_UNAVAILABLE' })))
+      .toBe('此商品目前無法購買')
     expect(apiErrorMessage(axiosError({ ...validationError, code: 'INSUFFICIENT_STOCK' })))
-      .toContain('庫存不足')
+      .toBe('商品庫存不足')
+    expect(apiErrorMessage(axiosError({ ...validationError, code: 'INVALID_ORDER_TRANSITION' })))
+      .toBe('目前訂單狀態不允許此操作')
     expect(apiErrorMessage(new Error('offline'))).toBe('無法連線，請稍後再試')
   })
 })

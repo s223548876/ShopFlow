@@ -23,6 +23,8 @@ async function logout(): Promise<void> {
         <RouterLink to="/">首頁</RouterLink>
         <RouterLink to="/products">商品</RouterLink>
         <RouterLink v-if="role === 'CUSTOMER'" to="/cart">購物車</RouterLink>
+        <RouterLink v-if="role === 'CUSTOMER'" to="/orders">我的訂單</RouterLink>
+        <RouterLink v-if="role === 'ADMIN'" to="/admin/orders">訂單管理</RouterLink>
         <template v-if="!isAuthenticated">
           <RouterLink to="/login">登入</RouterLink>
           <RouterLink to="/register">註冊</RouterLink>
