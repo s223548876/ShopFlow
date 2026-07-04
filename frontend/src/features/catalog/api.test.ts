@@ -34,7 +34,7 @@ describe('catalog API contract', () => {
 
   it('sends only documented product filters and sorting', async () => {
     await getProducts({
-      q: 'keyboard',
+      q: '  keyboard  ',
       categoryId: 1,
       page: 2,
       size: 20,
@@ -51,11 +51,21 @@ describe('catalog API contract', () => {
     })
   })
 
-  it('sends a text wildcard when no keyword is entered', async () => {
-    await getProducts({ page: 0, size: 20, sort: 'createdAt,desc' })
+  it.each([
+    ['undefined', undefined],
+    ['empty', ''],
+    ['blank', '   '],
+  ])('omits q when the keyword is %s', async (_label, q) => {
+    await getProducts({
+      q,
+      categoryId: 1,
+      page: 0,
+      size: 20,
+      sort: 'createdAt,desc',
+    })
 
     expect(request.params).toEqual({
-      q: '%',
+      categoryId: 1,
       page: 0,
       size: 20,
       sort: 'createdAt,desc',

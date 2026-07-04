@@ -39,8 +39,10 @@ export async function getCategories(): Promise<CategoryResponse[]> {
 }
 
 export async function getProducts(query: ProductQuery): Promise<PageResponse<ProductSummaryResponse>> {
+  const { q, ...params } = query
+  const keyword = q?.trim()
   return (await apiClient.get<PageResponse<ProductSummaryResponse>>('/products', {
-    params: { ...query, q: query.q ?? '%' },
+    params: keyword ? { ...params, q: keyword } : params,
   })).data
 }
 
