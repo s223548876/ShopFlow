@@ -1,6 +1,7 @@
 package com.shopflow.order;
 
 import com.shopflow.admin.AdminProductService;
+import com.shopflow.admin.AdminOrderService;
 import com.shopflow.auth.AuthService;
 import com.shopflow.auth.UserRepository;
 import com.shopflow.cart.CartService;
@@ -59,6 +60,9 @@ class OrderApiIntegrationTest {
 
     @MockitoBean
     private AdminProductService adminProductService;
+
+    @MockitoBean
+    private AdminOrderService adminOrderService;
 
     @MockitoBean
     private CartService cartService;

@@ -1,6 +1,7 @@
 package com.shopflow.auth;
 
 import com.shopflow.admin.AdminProductService;
+import com.shopflow.admin.AdminOrderService;
 import com.shopflow.auth.dto.AuthResponse;
 import com.shopflow.auth.dto.RegisterResponse;
 import com.shopflow.catalog.CatalogService;
@@ -59,6 +60,9 @@ class AuthSecurityIntegrationTest {
 
     @MockitoBean
     private AdminProductService adminProductService;
+
+    @MockitoBean
+    private AdminOrderService adminOrderService;
 
     @MockitoBean
     private CartService cartService;

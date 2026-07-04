@@ -1,6 +1,7 @@
 package com.shopflow.catalog;
 
 import com.shopflow.admin.AdminProductService;
+import com.shopflow.admin.AdminOrderService;
 import com.shopflow.admin.dto.AdminProductResponse;
 import com.shopflow.admin.dto.StockResponse;
 import com.shopflow.auth.AuthService;
@@ -60,6 +61,9 @@ class CatalogApiIntegrationTest {
 
     @MockitoBean
     private AdminProductService adminProductService;
+
+    @MockitoBean
+    private AdminOrderService adminOrderService;
 
     @MockitoBean
     private CartService cartService;
