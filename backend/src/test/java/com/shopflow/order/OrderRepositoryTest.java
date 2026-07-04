@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
@@ -114,5 +115,38 @@ class OrderRepositoryTest {
 
         assertThat(saved.getStatus()).isEqualTo(OrderStatus.PAID);
         assertThat(saved.getPaidAt()).isEqualTo(paidAt);
+    }
+
+    @Test
+    void adminSearchFiltersAllUsersOrdersByStatus() {
+        Order pending = orderRepository.saveAndFlush(new Order(owner, new BigDecimal("10.00")));
+        Order paid = new Order(otherUser, new BigDecimal("20.00"));
+        paid.pay(Instant.parse("2026-07-03T10:15:30Z"));
+        paid = orderRepository.saveAndFlush(paid);
+
+        var pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        assertThat(orderRepository.search(null, pageable).getContent())
+                .extracting(Order::getId)
+                .containsExactlyInAnyOrder(pending.getId(), paid.getId());
+        assertThat(orderRepository.search(OrderStatus.PAID, pageable).getContent())
+                .extracting(Order::getId)
+                .containsExactly(paid.getId());
+    }
+
+    @Test
+    void adminDetailAndWriteLockAreNotOwnerScoped() {
+        Order order = new Order(owner, new BigDecimal("20.00"));
+        order.addItem(firstProduct, "Snapshot", new BigDecimal("10.00"), 2, new BigDecimal("20.00"));
+        order = orderRepository.saveAndFlush(order);
+
+        Order detail = orderRepository.findWithUserAndItemsById(order.getId()).orElseThrow();
+
+        assertThat(detail.getUser().getEmail()).isEqualTo("owner@example.com");
+        assertThat(detail.getItems()).singleElement()
+                .extracting(OrderItem::getProductName)
+                .isEqualTo("Snapshot");
+        assertThat(orderRepository.findByIdForUpdate(order.getId())).isPresent();
+        assertThat(orderRepository.findByIdForUpdate(Long.MAX_VALUE)).isEmpty();
     }
 }

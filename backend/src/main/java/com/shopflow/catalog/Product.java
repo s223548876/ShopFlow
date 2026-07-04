@@ -78,6 +78,10 @@ public class Product {
         stock -= quantity;
     }
 
+    public void increaseStock(int quantity) {
+        stock += quantity;
+    }
+
     public void deactivate() {
         active = false;
     }

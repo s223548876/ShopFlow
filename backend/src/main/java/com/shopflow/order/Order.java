@@ -82,6 +82,10 @@ public class Order {
         this.paidAt = Objects.requireNonNull(paidAt);
     }
 
+    public void transitionTo(OrderStatus status) {
+        this.status = Objects.requireNonNull(status);
+    }
+
     public Long getId() {
         return id;
     }
