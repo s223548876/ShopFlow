@@ -80,6 +80,34 @@ class CatalogRepositoryTest {
     }
 
     @Test
+    void publicSearchSupportsCategoryWithoutKeyword() {
+        var page = productRepository.search(
+                true,
+                electronics.getId(),
+                null,
+                PageRequest.of(0, 20, Sort.by("id"))
+        );
+
+        assertThat(page.getContent())
+                .extracting(Product::getName)
+                .containsExactly("Mechanical Keyboard");
+    }
+
+    @Test
+    void publicSearchSupportsKeywordWithoutCategory() {
+        var page = productRepository.search(
+                true,
+                null,
+                "SPRING",
+                PageRequest.of(0, 20, Sort.by("id"))
+        );
+
+        assertThat(page.getContent())
+                .extracting(Product::getName)
+                .containsExactly("Spring in Action");
+    }
+
+    @Test
     void nullableFiltersSupportAdminCategoryAndCaseInsensitiveKeywordSearch() {
         var all = productRepository.search(
                 null,

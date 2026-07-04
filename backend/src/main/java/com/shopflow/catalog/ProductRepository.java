@@ -21,17 +21,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     JOIN FETCH p.category c
                     WHERE (:active IS NULL OR p.active = :active)
                       AND (:categoryId IS NULL OR c.id = :categoryId)
-                      AND (:q IS NULL
-                           OR p.name ILIKE CONCAT('%', :q, '%')
-                           OR p.description ILIKE CONCAT('%', :q, '%'))
+                      AND (CAST(:q AS string) IS NULL
+                           OR p.name ILIKE CONCAT('%', CAST(:q AS string), '%')
+                           OR p.description ILIKE CONCAT('%', CAST(:q AS string), '%'))
                     """,
             countQuery = """
                     SELECT COUNT(p) FROM Product p
                     WHERE (:active IS NULL OR p.active = :active)
                       AND (:categoryId IS NULL OR p.category.id = :categoryId)
-                      AND (:q IS NULL
-                           OR p.name ILIKE CONCAT('%', :q, '%')
-                           OR p.description ILIKE CONCAT('%', :q, '%'))
+                      AND (CAST(:q AS string) IS NULL
+                           OR p.name ILIKE CONCAT('%', CAST(:q AS string), '%')
+                           OR p.description ILIKE CONCAT('%', CAST(:q AS string), '%'))
                     """
     )
     Page<Product> search(
