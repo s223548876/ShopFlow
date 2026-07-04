@@ -2,10 +2,12 @@ package com.shopflow.order.dto;
 
 import com.shopflow.order.Order;
 import com.shopflow.order.OrderStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
+@Schema(requiredProperties = {"id", "status", "totalAmount", "itemCount", "createdAt"})
 public record OrderSummaryResponse(
         Long id,
         OrderStatus status,

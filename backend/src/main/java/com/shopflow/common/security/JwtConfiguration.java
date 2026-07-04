@@ -12,9 +12,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtClaimValidator;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -46,7 +48,14 @@ public class JwtConfiguration {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(secretKey)
                 .macAlgorithm(MacAlgorithm.HS256)
                 .build();
-        decoder.setJwtValidator(JwtValidators.createDefault());
+        decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
+                JwtValidators.createDefault(),
+                new JwtClaimValidator<>("sub", claim -> claim instanceof String subject && !subject.isBlank()),
+                new JwtClaimValidator<>("userId", Number.class::isInstance),
+                new JwtClaimValidator<>("role", claim -> "CUSTOMER".equals(claim) || "ADMIN".equals(claim)),
+                new JwtClaimValidator<>("iat", claim -> claim != null),
+                new JwtClaimValidator<>("exp", claim -> claim != null)
+        ));
         return decoder;
     }
 }

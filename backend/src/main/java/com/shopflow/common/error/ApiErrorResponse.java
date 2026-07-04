@@ -1,8 +1,11 @@
 package com.shopflow.common.error;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 import java.util.List;
 
+@Schema(requiredProperties = {"timestamp", "status", "code", "message", "path", "fieldErrors"})
 public record ApiErrorResponse(
         Instant timestamp,
         int status,

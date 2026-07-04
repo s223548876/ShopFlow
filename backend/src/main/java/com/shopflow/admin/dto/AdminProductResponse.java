@@ -2,10 +2,14 @@ package com.shopflow.admin.dto;
 
 import com.shopflow.catalog.Product;
 import com.shopflow.catalog.dto.CategoryResponse;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
+@Schema(requiredProperties = {
+        "id", "name", "description", "price", "stock", "active", "category", "createdAt", "updatedAt"
+})
 public record AdminProductResponse(
         Long id,
         String name,

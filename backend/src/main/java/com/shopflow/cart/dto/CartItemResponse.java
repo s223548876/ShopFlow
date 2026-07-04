@@ -2,9 +2,13 @@ package com.shopflow.cart.dto;
 
 import com.shopflow.cart.CartItem;
 import com.shopflow.catalog.Product;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 
+@Schema(requiredProperties = {
+        "id", "productId", "productName", "currentUnitPrice", "quantity", "subtotal", "available"
+})
 public record CartItemResponse(
         Long id,
         Long productId,

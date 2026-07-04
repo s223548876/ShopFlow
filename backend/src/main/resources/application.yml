@@ -19,8 +19,13 @@ spring:
 management:
   endpoints:
     web:
+      discovery:
+        enabled: false
       exposure:
         include: health
   endpoint:
     health:
       show-details: never
+
+springdoc:
+  default-produces-media-type: application/json

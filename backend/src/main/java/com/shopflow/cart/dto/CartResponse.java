@@ -1,10 +1,12 @@
 package com.shopflow.cart.dto;
 
 import com.shopflow.cart.Cart;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Schema(requiredProperties = {"id", "items", "estimatedTotal"})
 public record CartResponse(
         Long id,
         List<CartItemResponse> items,
