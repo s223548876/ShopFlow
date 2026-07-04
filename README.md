@@ -51,7 +51,11 @@ docker compose up --build
 | Vue / Nginx | `http://localhost:3000` |
 | 經 Nginx 代理的 health | `http://localhost:3000/actuator/health` |
 | backend health | `http://localhost:8080/actuator/health` |
+| Swagger UI | `http://localhost:8080/swagger-ui/index.html` |
+| OpenAPI JSON | `http://localhost:8080/v3/api-docs` |
 | PostgreSQL | `localhost:5432` |
+
+Swagger UI 與 OpenAPI JSON 由 backend `:8080` 直接提供，不經過 Nginx 或 Vite proxy。文件本身可匿名讀取；Swagger UI 的 Authorize 功能使用登入取得的 Bearer Access Token。Cart、Customer Order 與 Admin API 仍依 Spring Security 在執行時驗證 JWT 與角色，公開文件不會放寬 API 權限。
 
 停止服務：
 

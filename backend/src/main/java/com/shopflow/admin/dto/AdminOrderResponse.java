@@ -3,17 +3,19 @@ package com.shopflow.admin.dto;
 import com.shopflow.order.Order;
 import com.shopflow.order.OrderStatus;
 import com.shopflow.order.dto.OrderItemResponse;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
+@Schema(requiredProperties = {"id", "user", "status", "totalAmount", "paidAt", "createdAt", "items"})
 public record AdminOrderResponse(
         Long id,
         AdminOrderUserResponse user,
         OrderStatus status,
         BigDecimal totalAmount,
-        Instant paidAt,
+        @Schema(nullable = true) Instant paidAt,
         Instant createdAt,
         List<OrderItemResponse> items
 ) {

@@ -1,9 +1,11 @@
 package com.shopflow.catalog.dto;
 
 import com.shopflow.catalog.Product;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 
+@Schema(requiredProperties = {"id", "name", "description", "price", "stock", "category"})
 public record ProductDetailResponse(
         Long id,
         String name,

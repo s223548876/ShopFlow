@@ -78,6 +78,24 @@ class AuthSecurityIntegrationTest {
     }
 
     @Test
+    void unknownBackendPathsAreDeniedByDefault() throws Exception {
+        mockMvc.perform(get("/not-an-api"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("AUTHENTICATION_REQUIRED"));
+    }
+
+    @Test
+    void actuatorExposesOnlyHealth() throws Exception {
+        String token = jwtService.issue(101L, "ADMIN").accessToken();
+
+        for (String path : new String[]{"/actuator", "/actuator/info", "/actuator/env", "/actuator/metrics"}) {
+            mockMvc.perform(get(path).header("Authorization", "Bearer " + token))
+                    .andExpect(status().isForbidden())
+                    .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
+        }
+    }
+
+    @Test
     void registerReturnsCustomerDto() throws Exception {
         when(authService.register(any())).thenReturn(new RegisterResponse(
                 101L,
@@ -216,6 +234,40 @@ class AuthSecurityIntegrationTest {
                 .andExpect(jsonPath("$.code").value("AUTHENTICATION_REQUIRED"))
                 .andExpect(jsonPath("$.path").value("/api/protected-resource"))
                 .andExpect(jsonPath("$.fieldErrors").isArray());
+    }
+
+    @Test
+    void forgedJwtSignatureUsesUniformUnauthorizedError() throws Exception {
+        String[] parts = jwtService.issue(101L, "CUSTOMER").accessToken().split("\\.");
+        parts[2] = (parts[2].charAt(0) == 'A' ? "B" : "A") + parts[2].substring(1);
+
+        mockMvc.perform(get("/api/orders")
+                        .header("Authorization", "Bearer " + String.join(".", parts)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.code").value("AUTHENTICATION_REQUIRED"))
+                .andExpect(jsonPath("$.path").value("/api/orders"))
+                .andExpect(jsonPath("$.fieldErrors").isArray());
+    }
+
+    @Test
+    void jwtMissingRequiredClaimsUsesUniformUnauthorizedError() throws Exception {
+        Instant now = Instant.now();
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .subject("101")
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(1800))
+                .claim("role", "CUSTOMER")
+                .build();
+        String token = jwtEncoder.encode(JwtEncoderParameters.from(
+                JwsHeader.with(MacAlgorithm.HS256).build(),
+                claims
+        )).getTokenValue();
+
+        mockMvc.perform(get("/api/orders")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("AUTHENTICATION_REQUIRED"));
     }
 
     @Test
