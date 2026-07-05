@@ -23,9 +23,11 @@ beforeEach(() => {
 
 describe('cart API contract', () => {
   it('gets the authenticated cart', async () => {
-    await getCart()
+    const controller = new AbortController()
+    await getCart(controller.signal)
     expect(request.method).toBe('get')
     expect(request.url).toBe('/cart')
+    expect(request.signal).toBe(controller.signal)
   })
 
   it('posts only productId and quantity when adding', async () => {

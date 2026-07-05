@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 import { apiErrorMessage, getApiError } from '../../../api/errors'
 import { addCartItem } from '../../cart/api'
+import { useCartBadgeStore } from '../../cart/store'
 import { useAuthStore } from '../../auth/store'
 import { formatAmount } from '../../../lib/format'
 import { getProduct, type ProductDetailResponse } from '../api'
@@ -12,6 +13,7 @@ import { getProduct, type ProductDetailResponse } from '../api'
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const cartBadge = useCartBadgeStore()
 const product = ref<ProductDetailResponse | null>(null)
 const quantity = ref(1)
 const loading = ref(false)
@@ -56,6 +58,7 @@ async function addToCart(): Promise<void> {
   adding.value = true
   try {
     await addCartItem({ productId: product.value.id, quantity: quantity.value })
+    await cartBadge.refreshCartBadge().catch(() => undefined)
     ElMessage.success('已加入購物車')
   } catch (error) {
     ElMessage.error(apiErrorMessage(error))

@@ -25,8 +25,8 @@ export interface CartResponse {
   estimatedTotal: number
 }
 
-export async function getCart(): Promise<CartResponse> {
-  return (await apiClient.get<CartResponse>('/cart')).data
+export async function getCart(signal?: AbortSignal): Promise<CartResponse> {
+  return (await apiClient.get<CartResponse>('/cart', { signal })).data
 }
 
 export async function addCartItem(request: AddCartItemRequest): Promise<CartItemResponse> {
