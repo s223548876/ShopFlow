@@ -370,6 +370,38 @@ p {
   gap: 1rem;
 }
 
+.admin-create-link {
+  margin-top: 0;
+}
+
+.admin-product-filter {
+  grid-template-columns: minmax(180px, 2fr) repeat(3, minmax(140px, 1fr)) auto;
+}
+
+.admin-product-table {
+  min-height: 12rem;
+  margin-top: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+.admin-actions,
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-actions {
+  margin-top: 1.5rem;
+  justify-content: flex-end;
+}
+
+.product-form-card {
+  width: min(680px, 100%);
+}
+
 .order-detail-heading p {
   margin: 0.35rem 0;
   color: #64748b;
@@ -429,6 +461,12 @@ p {
   .cart-row,
   .order-card {
     grid-template-columns: 1fr;
+  }
+
+  .admin-actions,
+  .form-actions {
+    align-items: stretch;
+    flex-wrap: wrap;
   }
 
   .order-detail-heading,
