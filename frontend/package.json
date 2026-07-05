@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "test": "vitest run",
+    "test": "vitest run --exclude e2e/**",
+    "test:e2e": "playwright test",
     "build": "npm run type-check && vite build",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint . --max-warnings=0"
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.61.1",
     "@types/node": "^26.1.0",
     "@vitejs/plugin-vue": "^6.0.7",
     "eslint": "^10.0.1",
