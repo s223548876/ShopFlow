@@ -15,7 +15,7 @@
 ### Backend
 
 - 使用 Java 21、Spring Boot 3.5，按 `auth`、`catalog`、`cart`、`order`、`admin` 功能分包。
-- `security`、`error`、必要共用設定才可放在 shared package；不要建立萬用 `common` 垃圾桶。
+- `common` 只放 `api`、`error`、`openapi`、`security` 等跨模組能力；不要把功能邏輯放進萬用 common package。
 - Controller：HTTP status、request/response DTO、Bean Validation。
 - Service：商業規則、ownership check 與 `@Transactional` 邊界。
 - Repository：JPA query 與 persistence，不包含 HTTP 或 DTO 邏輯。
@@ -24,9 +24,9 @@
 ### Frontend
 
 - 使用 Vue 3 Composition API、`<script setup lang="ts">` 與 TypeScript strict。
-- 依 auth、catalog、cart、order、admin feature 組織 view、component、Pinia store 與 API module。
+- 依 `auth`、`catalog`、`cart`、`orders`、`admin-products` feature 組織 view、component、Pinia store 與 API module。
 - Axios instance 統一 `/api` base URL 與 Bearer token；token 存於 `sessionStorage`，登出時清除。
-- Vite `/api` proxy 只能存在於本機開發設定。Compose 完整啟動使用 Nginx 靜態檔服務與 `/api` reverse proxy。
+- Vite `/api`、`/actuator` proxy 只能存在於本機開發設定。Compose 完整啟動使用 Nginx 靜態檔服務與同路徑 reverse proxy。
 - 不在 frontend 複製後端授權、價格或訂單狀態判定；前端檢查只用於使用體驗。
 
 ## API 與 DTO
@@ -36,7 +36,7 @@
 - 分頁一律回傳固定 PageResponse，不直接暴露 Spring `Page` serialization shape。
 - 全域例外處理一律回傳 `timestamp`、`status`、`code`、`message`、`path`、`fieldErrors`。
 - 使用 ISO 8601 UTC 時間；金額使用 `BigDecimal`，不得使用 `double` 或 `float`。
-- Request 不得接受或信任 userId、role、商品價格、OrderItem subtotal 或 Order totalAmount。
+- Request 不得接受或信任 userId、role、Cart／OrderItem 商品價格、OrderItem subtotal 或 Order totalAmount；ADMIN 商品管理 DTO 可接受由後端驗證後保存的商品 price。
 
 ## Authentication 與授權
 
@@ -135,13 +135,13 @@
 - 只有三個指定狀態可取消；SHIPPED、COMPLETED 不可取消。
 - 重複或併發取消只回補一次，取消失敗全部 rollback。
 
-真正 PostgreSQL 的 migration、constraint、悲觀鎖與併發案例留給未來 Testcontainers；在加入前不得以 H2 結果宣稱 PostgreSQL 行為已驗證。
+H2 只驗證部分 JPA mapping 與基本 query，不得宣稱與 PostgreSQL 等價。PostgreSQL-specific migration、constraint、悲觀鎖與併發行為使用 Docker Compose 驗收；未來可用 Testcontainers 將其自動化。
 
 ## 敏感設定與 logging
 
-- DB URL、username、password、JWT secret、CORS origins 等由環境變數注入。
+- DB URL、username、password 與 JWT secret 由環境變數注入；目前同源 proxy 架構未啟用 CORS 設定。
 - `.env`、token、密碼、Authorization header、DB credentials 不得提交或寫入 logs。
-- repository 可在未來提供只有 placeholder 的 `.env.example`，不得含可用 secret。
+- repository 已提供只有 placeholder 的 `.env.example`，不得放入可用 secret。
 - 錯誤 response 與 logs 不輸出 stack trace、SQL 參數中的敏感值或內部 class name。
 
 ## 變更完成條件
