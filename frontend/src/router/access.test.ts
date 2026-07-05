@@ -17,7 +17,7 @@ describe('role-protected route access', () => {
     expect(roleAccess('ADMIN', 'CUSTOMER')).toBe('forbidden')
   })
 
-  it('protects admin order routes', () => {
+  it('protects admin product and order routes', () => {
     expect(roleAccess(null, 'ADMIN')).toBe('login')
     expect(roleAccess('CUSTOMER', 'ADMIN')).toBe('forbidden')
     expect(roleAccess('ADMIN', 'ADMIN')).toBe('allow')
