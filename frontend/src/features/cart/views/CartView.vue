@@ -14,8 +14,10 @@ import {
   type CartItemResponse,
   type CartResponse,
 } from '../api'
+import { useCartBadgeStore } from '../store'
 
 const cart = ref<CartResponse | null>(null)
+const cartBadge = useCartBadgeStore()
 const router = useRouter()
 const quantities = ref<Record<number, number>>({})
 const loading = ref(false)
@@ -28,6 +30,7 @@ async function loadCart(): Promise<void> {
   message.value = ''
   try {
     cart.value = await getCart()
+    cartBadge.setItemCountFromCart(cart.value)
     quantities.value = Object.fromEntries(cart.value.items.map((item) => [item.id, item.quantity]))
   } catch (error) {
     message.value = apiErrorMessage(error)
@@ -78,7 +81,11 @@ async function checkout(): Promise<void> {
   checkoutLoading.value = true
   try {
     await checkoutAndNavigate(
-      createOrder,
+      async () => {
+        const order = await createOrder()
+        cartBadge.clearCartBadge()
+        return order
+      },
       loadCart,
       (orderId) => router.push({ name: 'order-detail', params: { id: orderId } }),
     )
